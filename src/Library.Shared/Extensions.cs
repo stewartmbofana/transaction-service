@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Library.Shared.Data;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Transaction.Shared.Data;
 
-namespace Transaction.Shared;
+namespace Library.Shared;
 
 public static class TransactionsExtensions
 {

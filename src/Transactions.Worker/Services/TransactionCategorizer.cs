@@ -1,4 +1,4 @@
-namespace Transaction.Worker.Services;
+namespace Transactions.Worker.Services;
 
 internal class CategoryConfig
 {

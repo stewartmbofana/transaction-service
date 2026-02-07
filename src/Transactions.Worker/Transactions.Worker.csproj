@@ -1,23 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Worker">
 
 	<PropertyGroup>
 		<TargetFramework>net10.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<UserSecretsId>a809dc2c-a84e-4cff-b69c-331acb8edb2c</UserSecretsId>
+		<UserSecretsId>dotnet-Transaction.Worker-7a173960-ccb2-4e3e-ac54-369670efd9b3</UserSecretsId>
 		<DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
 	</PropertyGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Confluent.Kafka" Version="2.13.0" />
-		<PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.2" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Extensions.Hosting" Version="10.0.2" />
 		<PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Transaction.Shared\Transaction.Shared.csproj" />
+		<ProjectReference Include="..\Library.Shared\Library.Shared.csproj" />
 	</ItemGroup>
-
 </Project>

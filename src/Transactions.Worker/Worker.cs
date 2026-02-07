@@ -1,10 +1,11 @@
 using Confluent.Kafka;
+using Library.Shared.Data;
+using Library.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
-using Transaction.Shared.Data;
-using Transaction.Shared.Models;
-using Transaction.Worker.Services;
+using Transactions.Worker.Services;
 
-namespace Transaction.Worker;
+namespace Transactions.Worker;
 
 	public class Worker(
 		TransactionsDbContext context,

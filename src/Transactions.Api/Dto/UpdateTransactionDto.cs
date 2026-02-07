@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Transaction.Api.Dto; 
+namespace Transactions.Api.Dto; 
 public class UpdateTransactionDto {
 [Required]
 public string AccountNumber { get; set; } = default!;

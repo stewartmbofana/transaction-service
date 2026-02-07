@@ -1,4 +1,4 @@
-namespace Transaction.Api.Dto;
+namespace Transactions.Api.Dto;
 
 public record TransactionDto(
     Guid Id,

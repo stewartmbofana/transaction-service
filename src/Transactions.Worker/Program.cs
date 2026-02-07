@@ -1,5 +1,5 @@
-using Transaction.Worker;
-using Transaction.Worker.Services;
+using Transactions.Worker;
+using Transactions.Worker.Services;
 
 var builder = Host.CreateApplicationBuilder(args);
 builder.Services.AddHostedService<Worker>();

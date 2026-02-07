@@ -1,6 +1,6 @@
+using Library.Shared.Data;
+using Library.Shared;
 using Microsoft.EntityFrameworkCore;
-using Transaction.Shared;
-using Transaction.Shared.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 

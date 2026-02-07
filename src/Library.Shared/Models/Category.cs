@@ -1,4 +1,4 @@
-namespace Transaction.Shared.Models;
+namespace Library.Shared.Models;
 
 public class Category {
   public int Id { get; set; }

@@ -14,7 +14,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\Transaction.Shared\Transaction.Shared.csproj" />
+		<ProjectReference Include="..\Library.Shared\Library.Shared.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

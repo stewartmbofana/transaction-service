@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Transaction.Api.Dto;
+namespace Transactions.Api.Dto;
 
 public class CreateTransactionDto
 {
