@@ -1,5 +1,8 @@
+using Confluent.Kafka;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
+
 
 //using Microsoft.EntityFrameworkCore;
 using Transaction.Api.Dto;
@@ -65,6 +68,19 @@ public class TransactionsController : ControllerBase
 
 		_db.Transactions.Add(entity);
 		await _db.SaveChangesAsync(cancellationToken);
+
+        using (var producer = new ProducerBuilder<string, string>(new ProducerConfig()
+        {
+            BootstrapServers = "localhost:9092",
+            Acks = Acks.All
+        }).Build())
+		{
+			await producer.ProduceAsync("TransactionsTopic", new Message<string, string>()
+            {
+                Key = entity.Id.ToString(),
+                Value = JsonSerializer.Serialize(entity)
+            }, cancellationToken);
+		}
 
 		var result =
 			new TransactionDto(entity.Id, entity.AccountNumber, entity.Amount, entity.Currency,

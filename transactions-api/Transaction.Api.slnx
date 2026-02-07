@@ -1,4 +1,5 @@
 <Solution>
   <Project Path="Transaction.Api/Transaction.Api.csproj" />
   <Project Path="Transaction.Shared/Transaction.Shared.csproj" Id="1877cbb5-f47b-4af0-a73b-daff66558d5e" />
+  <Project Path="Transaction.Worker/Transaction.Worker.csproj" Id="c1c780ff-6597-476c-bdca-fe6123fecc51" />
 </Solution>

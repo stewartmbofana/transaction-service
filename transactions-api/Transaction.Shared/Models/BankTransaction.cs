@@ -2,28 +2,30 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Transaction.Shared.Models;
-public class BankTransaction {
-  [Key]
-  public Guid Id { get; set; } = Guid.NewGuid();
 
-  [Required]
-  [MaxLength(50)]
-  public string AccountNumber { get; set; } = default!;
+public class BankTransaction
+{
+	[Key]
+	public Guid Id { get; set; } = Guid.NewGuid();
 
-  [Column(TypeName = "numeric(18,2)")]
-  public decimal Amount { get; set; }
+	[Required]
+	[MaxLength(50)]
+	public string AccountNumber { get; set; } = default!;
 
-  [Required]
-  [MaxLength(3)]
-  public string Currency { get; set; } = "ZAR";
+	[Column(TypeName = "numeric(18,2)")]
+	public decimal Amount { get; set; }
 
-  [Required]
-  [MaxLength(20)]
-  public string Type { get; set; } = "Credit";
+	[Required]
+	[MaxLength(3)]
+	public string Currency { get; set; } = "ZAR";
 
-  [MaxLength(500)]
-  public string? Description { get; set; }
+	[Required]
+	[MaxLength(20)]
+	public string Type { get; set; } = "Credit";
 
-  [Required]
-  public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+	[MaxLength(500)]
+	public string? Description { get; set; }
+
+	[Required]
+	public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
 }
