@@ -28,4 +28,14 @@ public class BankTransaction
 
 	[Required]
 	public DateTimeOffset CreatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+	[Required]
+	public DateTimeOffset UpdatedAt { get; set; } = DateTimeOffset.UtcNow;
+
+
+	[Required]
+	public Guid CustomerId { get; set; }
+
+	[ForeignKey(nameof(CustomerId))]
+	public Customer? Customer { get; set; }
 }

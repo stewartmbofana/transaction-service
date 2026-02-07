@@ -15,7 +15,8 @@ public class TransactionDbContext : DbContext
         modelBuilder.Entity<Category>().HasData(
             new Category { Id = 1, Name = "Groceries" },
             new Category { Id = 2, Name = "Utilities" },
-            new Category { Id = 3, Name = "Entertainment" }
+            new Category { Id = 3, Name = "Entertainment" },
+            new Category { Id = 4, Name = "Uncategorized" }
         );
     }
 }

@@ -1,10 +1,15 @@
 using Confluent.Kafka;
 using System.Text.Json;
+using Transaction.Shared.Data;
 using Transaction.Shared.Models;
+using Transaction.Worker.Services;
 
 namespace Transaction.Worker;
 
-	public class Worker(ILogger<Worker> logger) : BackgroundService
+	public class Worker(
+		TransactionsDbContext context,
+        ITransactionCategorizer categorizer,
+        ILogger<Worker> logger) : BackgroundService
 	{
 		protected override async Task ExecuteAsync(CancellationToken stoppingToken)
 		{
@@ -30,11 +35,29 @@ namespace Transaction.Worker;
 					logger.LogInformation($"Consuming {transaction}");
 
 
-					//EmployeeReport er = new(Guid.NewGuid(), employee.Id, employee.Name, employee.Surname);
-					//_reportDbContext.Reports.Add(er);
+				// Determine category name using intelligent, configuration-driven categorizer
+				var categoryName = categorizer.GetCategoryName(transaction.Description ?? string.Empty);
 
-					//await _reportDbContext.SaveChangesAsync();
+				// Try find existing category, otherwise create it
+				var category = await context.Categories
+					.FirstOrDefaultAsync(c => c.Name == categoryName);
+
+				if (category == null)
+				{
+					category = new Category { Name = categoryName };
+					context.Categories.Add(category);
+
+					await context.SaveChangesAsync(); // ensure Category.Id is set
 				}
+
+				transaction.CategoryId = category.Id;
+
+				context.Transactions.Add(transaction);
+
+				await context.SaveChangesAsync();
+
+				logger.LogInformation($"Transaction {transaction} saved with category {categoryName}");
+			}
 				else
 				{
 					logger.LogInformation("Nothing found to consume");
