@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using Transaction.Ingestor.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -21,3 +24,10 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.Run();
+
+// Initial database migration and update
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<TransactionDbContext>();
+    dbContext.Database.Migrate();
+}
