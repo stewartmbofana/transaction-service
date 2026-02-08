@@ -30,7 +30,7 @@ app.MapControllers();
 app.Run();
 
 // Initial database migration and update
-using (var scope = app.Services.CreateScope()) {
-  var dbContext = scope.ServiceProvider.GetRequiredService<TransactionsDbContext>();
-  dbContext.Database.Migrate();
-}
+using var scope = app.Services.CreateScope();
+
+var dbContext = scope.ServiceProvider.GetRequiredService<TransactionsDbContext>();
+dbContext.Database.Migrate();

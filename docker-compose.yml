@@ -6,34 +6,29 @@ x-default-logging: &logging
     tag: "{{.Name}}"
 
 services:
-  # transaction.api:
-  #   image: ${DOCKER_REGISTRY-}transactionapi
-  #   build:
-  #     context: .
-  #     dockerfile: Transaction.Api/Dockerfile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     - ASPNETCORE_HTTPS_PORTS=8081
-  #   ports:
-  #     - "8080"
-  #     - "8081"
-  #   networks:
-  #     - bank_network
-  # transaction.ingestor:
-  #   image: ${DOCKER_REGISTRY-}transactioningestor
-  #   build:
-  #     context: .
-  #     dockerfile: Transaction.Ingestor/Dockerfile
-  #   environment:
-  #     - ASPNETCORE_ENVIRONMENT=Development
-  #     - ASPNETCORE_HTTP_PORTS=8080
-  #     - ASPNETCORE_HTTPS_PORTS=8081
-  #   ports:
-  #     - "8080"
-  #     - "8081"
-  #   networks:
-  #     - bank_network
+  customers.api:
+    build:
+      context: .
+      dockerfile: ${CUSTOMER_DOCKERFILE}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5100:5100"
+      - "5101:5101"
+    networks:
+      - bank_network
+
+  transactions.api:
+    build:
+      context: .
+      dockerfile: ${TRANSACTION_DOCKERFILE}
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5200:5200"
+      - "5201:5201"
+    networks:
+      - bank_network
   postgres:
     image: postgres:alpine
     container_name: postgres
@@ -41,13 +36,12 @@ services:
       - .env
     volumes:
       - db_data:/var/lib/postgresql/data
-      - ./initdb.d:/docker-entrypoint-initdb.d
     environment:
-      POSTGRES_DB: bankdb
-      POSTGRES_USER: bankuser
-      POSTGRES_PASSWORD: Il0v3kfc@247
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "127.0.0.1:5432:5432" # HOST_PORT:CONTAINER_PORT
+      - "127.0.0.1:5432:5432" 
     networks:
       - bank_network
   pgadmin:
@@ -85,10 +79,6 @@ services:
       - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092
       - KAFKA_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092,CONTROLLER://${KAFKA_HOST}:9093
       - KAFKA_CONTROLLER_QUORUM_VOTERS=1@${KAFKA_HOST}:9093
-      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
-      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
-      - OTEL_RESOURCE_ATTRIBUTES
-      - OTEL_SERVICE_NAME=kafka
       - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
       # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
       - _JAVA_OPTIONS
@@ -130,7 +120,6 @@ services:
 
 volumes:
   db_data:
-    driver: local
   pgadmin_working_dir:
     driver: local
   pgadmin_config_dir:
