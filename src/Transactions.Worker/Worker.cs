@@ -24,7 +24,7 @@ namespace Transactions.Worker;
 			};
 
 			using var consumer = new ConsumerBuilder<string, string>(consumerConfig).Build();
-			consumer.Subscribe("TransactionsTopic");
+			consumer.Subscribe("bank.transactions");
 
 			while (!stoppingToken.IsCancellationRequested)
 			{

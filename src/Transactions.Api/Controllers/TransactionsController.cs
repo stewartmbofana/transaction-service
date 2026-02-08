@@ -63,7 +63,7 @@ public class TransactionsController : ControllerBase {
                    new ProducerConfig() { BootstrapServers = "localhost:9092", Acks = Acks.All })
                    .Build()) {
       await producer.ProduceAsync(
-          "TransactionsTopic",
+          "bank.transactions",
           new Message<string, string>() { Key = entity.Id.ToString(),
                                           Value = JsonSerializer.Serialize(entity) },
           cancellationToken);

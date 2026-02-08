@@ -1,3 +1,10 @@
+x-default-logging: &logging
+  driver: "json-file"
+  options:
+    max-size: "5m"
+    max-file: "2"
+    tag: "{{.Name}}"
+
 services:
   # transaction.api:
   #   image: ${DOCKER_REGISTRY-}transactionapi
@@ -27,29 +34,24 @@ services:
   #     - "8081"
   #   networks:
   #     - bank_network
-
   postgres:
-    # see https://hub.docker.com/_/postgres for list of postgres image versions on docker hub
-    #image: postgres:latest # To download the latest image
-    #image: postgres:17.4-alpine # To download a specific version, here the version 17.4 of Postgresql under an alpine linux distribution
-    image: postgres:17.4 # To download a specific version, here the version 17.4 of Postgresql
+    image: postgres:alpine
     container_name: postgres
+    env_file:
+      - .env
     volumes:
       - db_data:/var/lib/postgresql/data
       - ./initdb.d:/docker-entrypoint-initdb.d
-    env_file:
-      - .env
     environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: bankdb
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: Il0v3kfc@247
     ports:
-      - "5432:5432" # HOST_PORT:CONTAINER_PORT
+      - "127.0.0.1:5432:5432" # HOST_PORT:CONTAINER_PORT
     networks:
       - bank_network
   pgadmin:
-    # see https://hub.docker.com/r/dpage/pgadmin4
-    image: dpage/pgadmin4:latest # To download the latest image
+    image: dpage/pgadmin4:latest
     container_name: pgadmin
     volumes:
       - pgadmin_working_dir:/var/lib/pgadmin
@@ -58,14 +60,47 @@ services:
       - .env
     environment:
       PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_USER: bankuser
+      POSTGRES_PASSWORD: Il0v3kfc@247
     depends_on:
       - postgres
     ports:
       - "5433:80" # HOST_PORT:CONTAINER_PORT
     networks:
       - bank_network
+
+  kafka:
+    container_name: kafka
+    build:
+      context: ./
+      dockerfile: ${KAFKA_DOCKERFILE}
+      args:
+        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
+    deploy:
+      resources:
+        limits:
+          memory: 620M
+    restart: unless-stopped
+    environment:
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092
+      - KAFKA_LISTENERS=PLAINTEXT://${KAFKA_HOST}:9092,CONTROLLER://${KAFKA_HOST}:9093
+      - KAFKA_CONTROLLER_QUORUM_VOTERS=1@${KAFKA_HOST}:9093
+      - OTEL_EXPORTER_OTLP_ENDPOINT=http://${OTEL_COLLECTOR_HOST}:${OTEL_COLLECTOR_PORT_HTTP}
+      - OTEL_EXPORTER_OTLP_METRICS_TEMPORALITY_PREFERENCE
+      - OTEL_RESOURCE_ATTRIBUTES
+      - OTEL_SERVICE_NAME=kafka
+      - KAFKA_HEAP_OPTS=-Xmx400m -Xms400m
+      # Workaround on OSX for https://bugs.openjdk.org/browse/JDK-8345296
+      - _JAVA_OPTIONS
+    healthcheck:
+      test: nc -z kafka 9092
+      start_period: 10s
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    networks:
+      - bank_network
+    logging: *logging
 
   kafka-ui:
     container_name: kafka-ui
@@ -74,10 +109,24 @@ services:
       - 8080:8080
     environment:
       DYNAMIC_CONFIG_ENABLED: "true"
+      KAFKA_CLUSTERS_0_NAME: "local"
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: "kafka:9092"
     networks:
       - bank_network
-    volumes:
-      - ~/kui/config.yml:/etc/kafkaui/dynamic_config.yaml
+  # kafka-init-topics:
+  #   image: confluentinc/cp-kafka:7.2.1
+  #   volumes:
+  #     - ./data/message.json:/data/message.json
+  #   networks:
+  #     - bank_network
+  #   depends_on:
+  #     - kafka
+  #   command: "bash -c 'echo Waiting for Kafka to be ready... && \
+  #     cub kafka-ready -b kafka:9092 1 30 && \
+  #     kafka-topics --create --topic bank.transactions --partitions 3 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 && \
+  #     kafka-topics --create --topic bank.customers --partitions 2 --replication-factor 1 --if-not-exists --bootstrap-server kafka:9092 && \
+  #     kafka-topics --create --topic transactions.errors --partitions 2 --replication-factor 1 --if-not-exists --bootstrap-server kafka:90922 && \
+  #     kafka-console-producer --bootstrap-server kafka:9092 -topic transactions.topic < /data/message.json'"
 
 volumes:
   db_data:

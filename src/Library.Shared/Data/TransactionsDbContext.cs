@@ -4,7 +4,8 @@ using Microsoft.EntityFrameworkCore;
 namespace Library.Shared.Data;
 
 public class TransactionsDbContext : DbContext {
-  public TransactionsDbContext(DbContextOptions<TransactionsDbContext> options) : base(options) {}
+  public TransactionsDbContext(DbContextOptions<TransactionsDbContext> options) : base(options) {
+  }
   public DbSet<Category> Categories => Set<Category>();
   public DbSet<Customer> Customers => Set<Customer>();
   public DbSet<BankTransaction> Transactions { get; set; } = null!;
