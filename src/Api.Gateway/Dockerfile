@@ -4,16 +4,16 @@
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 USER $APP_UID
 WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+EXPOSE 9090
+EXPOSE 9091
 
 
 # This stage is used to build the service project
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Api.Gateway/Api.Gateway.csproj", "Api.Gateway/"]
-RUN dotnet restore "./Api.Gateway/Api.Gateway.csproj"
+COPY ["./src/Api.Gateway/Api.Gateway.csproj", "./src/Api.Gateway/"]
+RUN dotnet restore "./src/Api.Gateway/Api.Gateway.csproj"
 COPY . .
 WORKDIR "/src/Api.Gateway"
 RUN dotnet build "./Api.Gateway.csproj" -c $BUILD_CONFIGURATION -o /app/build

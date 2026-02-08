@@ -1,0 +1,46 @@
+{
+    "ReverseProxy": {
+        "Routes": [
+            {
+                "RouteId": "customers_route",
+                "ClusterId": "customers_cluster",
+                "Match": {
+                    "Path": "/customers/{**catch-all}"
+                },
+                "Transforms": [
+                    {
+                        "PathRemovePrefix": "/customers"
+                    }
+                ]
+            },
+            {
+                "RouteId": "transactions_route",
+                "ClusterId": "transactions_cluster",
+                "Match": {
+                    "Path": "/transactions/{**catch-all}"
+                },
+                "Transforms": [
+                    {
+                        "PathRemovePrefix": "/transactions"
+                    }
+                ]
+            }
+        ],
+        "Clusters": {
+            "customers_cluster": {
+                "Destinations": {
+                    "dest1": {
+                        "Address": "http://customers_api:5100/"
+                    }
+                }
+            },
+            "transactions_cluster": {
+                "Destinations": {
+                    "dest1": {
+                        "Address": "http://transactions_api::5200/"
+                    }
+                }
+            }
+        }
+    }
+}

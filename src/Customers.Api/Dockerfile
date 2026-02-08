@@ -12,9 +12,9 @@ EXPOSE 5101
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Customers.Api/Customers.Api.csproj", "Customers.Api/"]
-COPY ["Library.Shared/Library.Shared.csproj", "Library.Shared/"]
-RUN dotnet restore "./Customers.Api/Customers.Api.csproj"
+COPY ["./src/Customers.Api/Customers.Api.csproj", "./src/Customers.Api/"]
+COPY ["./src/Library.Shared/Library.Shared.csproj", "./src/Library.Shared/"]
+RUN dotnet restore "./src/Customers.Api/Customers.Api.csproj"
 COPY . .
 WORKDIR "/src/Customers.Api"
 RUN dotnet build "./Customers.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build

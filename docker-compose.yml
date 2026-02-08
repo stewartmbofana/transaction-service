@@ -6,7 +6,18 @@ x-default-logging: &logging
     tag: "{{.Name}}"
 
 services:
-  customers.api:
+  yarp_proxy:
+    build:
+      context: .
+      dockerfile: ./src/Api.Gateway/Dockerfile
+    ports:
+      - "80:5000"
+    volumes:
+      - "./infra/yarp/config.json:/etc/yarp/config:ro"
+    networks:
+      - bank_network
+    logging: *logging
+  customers:
     build:
       context: .
       dockerfile: ${CUSTOMER_DOCKERFILE}
@@ -18,7 +29,7 @@ services:
     networks:
       - bank_network
 
-  transactions.api:
+  transactions:
     build:
       context: .
       dockerfile: ${TRANSACTION_DOCKERFILE}
@@ -41,7 +52,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "127.0.0.1:5432:5432" 
+      - "127.0.0.1:5432:5432"
     networks:
       - bank_network
   pgadmin:
@@ -68,8 +79,6 @@ services:
     build:
       context: ./
       dockerfile: ${KAFKA_DOCKERFILE}
-      args:
-        OTEL_JAVA_AGENT_VERSION: ${OTEL_JAVA_AGENT_VERSION}
     deploy:
       resources:
         limits:

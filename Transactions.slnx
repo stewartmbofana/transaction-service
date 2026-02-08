@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="src/Api.Gateway/Api.Gateway.csproj" />
+  <Project Path="src/Customers.Api.Tests/Customers.Api.Tests.csproj" />
+  <Project Path="src/Customers.Api/Customers.Api.csproj" />
+  <Project Path="src/Library.Shared/Library.Shared.csproj" />
+  <Project Path="src/Transactions.Api.Tests/Transactions.Api.Tests.csproj" />
+  <Project Path="src/Transactions.Api/Transactions.Api.csproj" />
+  <Project Path="src/Transactions.Worker/Transactions.Worker.csproj" />
+</Solution>

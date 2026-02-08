@@ -11,9 +11,9 @@ EXPOSE 5201
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Transactions.Api/Transactions.Api.csproj", "Transactions.Api/"]
-COPY ["Library.Shared/Library.Shared.csproj", "Library.Shared/"]
-RUN dotnet restore "./Transactions.Api/Transactions.Api.csproj"
+COPY ["./src/Transactions.Api/Transactions.Api.csproj", "./src/Transactions.Api/"]
+COPY ["./src/Library.Shared/Library.Shared.csproj", "./src/Library.Shared/"]
+RUN dotnet restore "./src/Transactions.Api/Transactions.Api.csproj"
 COPY . .
 WORKDIR "/src/Transactions.Api"
 RUN dotnet build "./Transactions.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
